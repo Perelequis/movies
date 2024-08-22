@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filmes</title>
+    <link rel="icon" href="pipoca.ico" type="image/x-icon">
+    <title>Lista de Filmes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            font-size: 90%; /* Reduzir o tamanho da fonte em 10% */
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffffff; /* 100% branco */
+            font-size: 24px; /* Tamanho de fonte fixo para o título */
+        }
+
+        .filters {
+            display: flex;
+            justify-content: center; /* Centraliza horizontalmente */
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #search, #genre, #age, #sort {
+            padding: 9px; /* Ajustar o padding para manter a proporção */
+            font-size: 14.4px; /* Reduzir o tamanho da fonte em 10% */
+            width: 30%; /* Ajustar a largura conforme necessário */
+            max-width: 250px; /* Limitar a largura dos filtros */
+            background-color: #2c2c2c;
+            color: #ffffff;
+            border: 1px solid #444;
+            border-radius: 8px;
+            margin-left: 10px;
+        }
+
+        #movie-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #movie-list li {
+            background-color: #333;
+            margin-bottom: 10px;
+            padding: 13.5px; /* Reduzir o padding em 10% */
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s, box-shadow 0.3s;
+            max-width: 80%; /* Limitar a largura dos itens da lista */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #movie-list li:hover {
+            background-color: #444; /* Cor de fundo mais clara quando o mouse passa por cima */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* Sombra mais forte */
+        }
+
+        #movie-list li a {
+            text-decoration: none;
+            color: #d9d9d9; /* 80% branco */
+            font-weight: bold;
+            font-size: 16.2px; /* Reduzir o tamanho da fonte em 10% */
+        }
+
+        #movie-list li span {
+            display: block;
+            margin-top: 5px;
+            color: #999999; /* 60% branco */
+            font-size: 12.6px; /* Reduzir o tamanho da fonte em 10% */
+        }
+
+        #movie-list li img {
+            width: 18px; /* Reduzir o tamanho dos ícones em 10% */
+            height: 18px; /* Reduzir o tamanho dos ícones em 10% */
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista de Filmes</h1>
+    
+    <div class="filters">
+        <input type="text" id="search" placeholder="Pesquisar por título...">
+    </div>
+    <div class="filters">
+        <select id="genre">
+            <option value="">Todos os Gêneros</option>
+            <option value="Ação">Ação</option>
+            <option value="Comédia">Comédia</option>
+            <option value="Drama">Drama</option>
+            <!-- Adicione mais gêneros conforme necessário -->
+        </select>
+        <select id="age">
+            <option value="">Todas as Idades</option>
+            <option value="L">Livre</option>
+            <option value="10">10 anos</option>
+            <option value="12">12 anos</option>
+            <option value="14">14 anos</option>
+            <option value="16">16 anos</option>
+            <option value="18">18 anos</option>
+        </select>
+        <select id="sort">
+            <option value="alphabetical">Ordem Alfabética</option>
+            <option value="release-date">Data de Lançamento</option>
+        </select>
+    </div>
+
+    <ul id="movie-list">
+        <!-- Filmes serão listados aqui -->
+    </ul>
+
+    <script>
+        const movies = [
+            { title: "Inception", genre: "Ação", releaseDate: "2010", age: "14", link: "https://www.example.com/inception" },
+            { title: "The Dark Knight", genre: "Ação", releaseDate: "2008", age: "14", link: "https://www.example.com/dark-knight" },
+            { title: "Interstellar", genre: "Drama", releaseDate: "2014", age: "12", link: "https://www.example.com/interstellar" },
+            { title: "The Hangover", genre: "Comédia", releaseDate: "2009", age: "18", link: "https://www.example.com/hangover" },
+            // Adicione mais filmes conforme necessário
+        ];
+
+        const movieList = document.getElementById('movie-list');
+        const searchInput = document.getElementById('search');
+        const genreSelect = document.getElementById('genre');
+        const ageSelect = document.getElementById('age');
+        const sortSelect = document.getElementById('sort');
+
+        function renderMovies(filteredMovies) {
+            movieList.innerHTML = ''; // Limpa a lista antes de renderizar
+
+            if (filteredMovies.length === 0) {
+                movieList.innerHTML = '<li>Nenhum filme encontrado.</li>';
+                return;
+            }
+
+            filteredMovies.forEach(movie => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <a href="${movie.link}" target="_blank">${movie.title}</a>
+                    <span>${movie.genre} | ${movie.releaseDate} <img src="${movie.age}.png" alt="Classificação ${movie.age} anos"></span>
+                `;
+                movieList.appendChild(li);
+            });
+        }
+
+        function filterAndSortMovies() {
+            let filteredMovies = movies.filter(movie => {
+                return movie.title.toLowerCase().includes(searchInput.value.toLowerCase()) &&
+                    (genreSelect.value === '' || movie.genre === genreSelect.value) &&
+                    (ageSelect.value === '' || movie.age === ageSelect.value);
+            });
+
+            if (sortSelect.value === 'alphabetical') {
+                filteredMovies.sort((a, b) => a.title.localeCompare(b.title));
+            } else if (sortSelect.value === 'release-date') {
+                filteredMovies.sort((a, b) => b.releaseDate - a.releaseDate);
+            }
+
+            renderMovies(filteredMovies);
+        }
+
+        searchInput.addEventListener('input', filterAndSortMovies);
+        genreSelect.addEventListener('change', filterAndSortMovies);
+        ageSelect.addEventListener('change', filterAndSortMovies);
+        sortSelect.addEventListener('change', filterAndSortMovies);
+
+        // Render inicial
+        renderMovies(movies);
+    </script>
+</body>
+</html>
